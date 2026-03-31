@@ -1,0 +1,29 @@
+services:
+  worker:
+    build: .
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      TRANSCRIPTION_WORKER_SECRET: ${TRANSCRIPTION_WORKER_SECRET}
+      WHISPER_MODEL_PATH: /app/models/ggml-base.en.bin
+      WHISPER_CPP_EXE: whisper-cli
+      FFMPEG_PATH: /usr/bin/ffmpeg
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    environment:
+      WORKER_DOMAIN: ${WORKER_DOMAIN}
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - worker
+
+volumes:
+  caddy_data:
+  caddy_config:

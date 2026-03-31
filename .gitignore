@@ -1,0 +1,16 @@
+data/
+*.log
+models/
+.env
+.env.*
+node_modules/
+.next/
+generated/
+dist/
+build/
+coverage/
+.vercel/
+worker/data/
+saas/node_modules/
+saas/.next/
+saas/generated/

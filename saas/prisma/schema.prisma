@@ -1,0 +1,82 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model User {
+  id                String             @id @default(cuid())
+  clerkUserId       String             @unique
+  email             String             @unique
+  fullName          String?
+  plan              Plan               @default(FREE)
+  createdAt         DateTime           @default(now())
+  updatedAt         DateTime           @updatedAt
+  subscriptions     Subscription[]
+  transcriptionJobs TranscriptionJob[]
+  usageEvents       UsageEvent[]
+}
+
+model Subscription {
+  id                   String              @id @default(cuid())
+  userId               String
+  stripeCustomerId     String?             @unique
+  stripeSubscriptionId String?             @unique
+  stripePriceId        String?
+  status               SubscriptionStatus  @default(INACTIVE)
+  currentPeriodEnd     DateTime?
+  createdAt            DateTime            @default(now())
+  updatedAt            DateTime            @updatedAt
+  user                 User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+model TranscriptionJob {
+  id               String      @id @default(cuid())
+  userId           String
+  originalFileName String
+  mediaUrl         String
+  transcriptText   String?
+  transcriptFormat String      @default("text")
+  status           JobStatus   @default(QUEUED)
+  durationSeconds  Int?
+  errorMessage     String?
+  createdAt        DateTime    @default(now())
+  completedAt      DateTime?
+  updatedAt        DateTime    @updatedAt
+  user             User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  usageEvents      UsageEvent[]
+}
+
+model UsageEvent {
+  id          String            @id @default(cuid())
+  userId      String
+  jobId       String?
+  metricType  String
+  metricValue Int
+  createdAt   DateTime          @default(now())
+  job         TranscriptionJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+  user        User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+enum Plan {
+  FREE
+  PRO
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  ACTIVE
+  PAST_DUE
+  CANCELED
+  TRIALING
+}
+
+enum JobStatus {
+  QUEUED
+  PROCESSING
+  COMPLETED
+  FAILED
+}

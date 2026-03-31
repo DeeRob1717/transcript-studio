@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Transcript Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <div class="page-shell">
+    <header class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Self-hosted transcription workspace</p>
+        <h1>Upload audio or video and get transcripts back automatically.</h1>
+        <p class="hero-text">
+          This app stores your files locally, runs offline transcription on your own machine,
+          and keeps a searchable history of processed jobs.
+        </p>
+      </div>
+      <div class="hero-panel">
+        <div class="stat-card">
+          <span class="stat-label">Backend</span>
+          <strong>PowerShell API</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Provider</span>
+          <strong>Local whisper.cpp</strong>
+        </div>
+        <div class="stat-card">
+          <span class="stat-label">Storage</span>
+          <strong>Local disk</strong>
+        </div>
+      </div>
+    </header>
+
+    <main class="layout">
+      <section class="panel upload-panel">
+        <div class="panel-head">
+          <h2>New transcription</h2>
+          <p>Drop a media file here or choose one from your device.</p>
+        </div>
+
+        <label class="dropzone" id="dropzone">
+          <input id="fileInput" type="file" accept="audio/*,video/*">
+          <span class="dropzone-title">Drop audio/video here</span>
+          <span class="dropzone-subtitle">Supports common media formats like mp3, wav, m4a, mp4, mov, and webm.</span>
+          <span class="dropzone-button">Choose file</span>
+        </label>
+
+        <div class="selected-file hidden" id="selectedFile"></div>
+
+        <p class="helper-note">
+          Free mode uses <code>whisper.cpp</code>. Install <code>ffmpeg</code> too if you want mp3, m4a, mp4, mov,
+          webm, and most non-WAV files to work smoothly.
+        </p>
+
+        <button class="primary-button" id="uploadButton" disabled>Upload and transcribe</button>
+
+        <div class="status-box hidden" id="statusBox"></div>
+      </section>
+
+      <section class="panel jobs-panel">
+        <div class="panel-head">
+          <h2>Recent transcripts</h2>
+          <p>Your finished and failed jobs appear here.</p>
+        </div>
+
+        <div class="jobs-list" id="jobsList"></div>
+      </section>
+    </main>
+  </div>
+
+  <template id="jobTemplate">
+    <article class="job-card">
+      <div class="job-top">
+        <div>
+          <h3 class="job-title"></h3>
+          <p class="job-meta"></p>
+        </div>
+        <span class="job-status"></span>
+      </div>
+      <pre class="job-transcript"></pre>
+    </article>
+  </template>
+
+  <script src="/app.js"></script>
+</body>
+</html>

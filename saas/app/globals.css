@@ -1,0 +1,517 @@
+:root {
+  --bg: #07151a;
+  --panel: rgba(10, 30, 34, 0.88);
+  --panel-strong: rgba(12, 44, 50, 0.95);
+  --text: #ecfbf7;
+  --muted: #9abdb8;
+  --line: rgba(173, 241, 227, 0.14);
+  --brand: #7bf2cf;
+  --brand-dark: #2dd4ac;
+  --accent: #7eb9ff;
+  --accent-warm: #ffd47e;
+  --danger: #ff7a97;
+  --shadow: 0 30px 80px rgba(0, 0, 0, 0.32);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  min-height: 100%;
+  font-family: "Segoe UI", "Trebuchet MS", sans-serif;
+  background:
+    radial-gradient(circle at top left, rgba(123, 242, 207, 0.14), transparent 28%),
+    radial-gradient(circle at top right, rgba(126, 185, 255, 0.12), transparent 30%),
+    linear-gradient(180deg, #041115, #07191d 42%, #061115);
+  color: var(--text);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+}
+
+.marketing-shell,
+.dashboard-page {
+  position: relative;
+  z-index: 1;
+  width: min(1160px, calc(100% - 32px));
+  margin: 0 auto;
+}
+
+.site-header {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  padding: 28px 0;
+}
+
+.brand,
+.dashboard-brand {
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.brand-wrap {
+  display: grid;
+  gap: 6px;
+}
+
+.brand {
+  font-size: 1.1rem;
+}
+
+.brand-tag {
+  color: var(--muted);
+  font-size: 0.84rem;
+}
+
+.site-nav,
+.dashboard-nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.ghost-button,
+.primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 42px;
+  padding: 0 16px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  cursor: pointer;
+  transition: transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+}
+
+.ghost-button {
+  background: rgba(255, 255, 255, 0.02);
+  color: var(--text);
+}
+
+.primary-button {
+  background: linear-gradient(135deg, var(--brand), var(--accent-warm));
+  color: #062327;
+  border: none;
+  font-weight: 700;
+}
+
+.ghost-button:hover,
+.primary-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.22);
+}
+
+.hero {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+  padding: 36px 0 24px;
+}
+
+.hero-card,
+.hero-sidecard,
+.price-card,
+.metric-card,
+.upload-card,
+.jobs-card,
+.dashboard-sidebar,
+.feature-card,
+.faq-card,
+.empty-card {
+  background: linear-gradient(180deg, rgba(13, 42, 48, 0.88), rgba(7, 25, 29, 0.94));
+  border: 1px solid var(--line);
+  border-radius: 28px;
+  box-shadow: var(--shadow);
+  backdrop-filter: blur(12px);
+  position: relative;
+  z-index: 1;
+}
+
+.hero-card,
+.hero-sidecard,
+.price-card,
+.metric-card,
+.upload-card,
+.jobs-card,
+.feature-card,
+.faq-card,
+.empty-card {
+  padding: 24px;
+}
+
+.hero-copy {
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 58ch;
+  font-size: 1.05rem;
+}
+
+.hero-card h1 {
+  margin: 0 0 16px;
+  font-size: clamp(2.4rem, 5vw, 4.8rem);
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+
+.eyebrow {
+  margin: 0 0 12px;
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.hero-actions {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+  margin-top: 24px;
+}
+
+.hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 22px;
+}
+
+.hero-proof span,
+.hero-stat-label {
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.hero-proof span {
+  padding: 8px 12px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.hero-sidecard {
+  display: grid;
+  gap: 18px;
+  align-content: center;
+}
+
+.hero-stat {
+  display: grid;
+  gap: 8px;
+}
+
+.hero-stat strong {
+  font-size: 1.06rem;
+  line-height: 1.45;
+}
+
+.price-card ul {
+  margin: 0;
+  padding-left: 18px;
+  color: var(--muted);
+}
+
+.section-block {
+  padding: 12px 0 42px;
+}
+
+.section-heading {
+  margin-bottom: 18px;
+}
+
+.section-heading h2 {
+  margin: 0 0 10px;
+  font-size: 2rem;
+}
+
+.section-heading p {
+  margin: 0;
+  color: var(--muted);
+  max-width: 50ch;
+  line-height: 1.7;
+}
+
+.feature-grid,
+.faq-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.feature-card h3,
+.faq-card h3 {
+  margin: 0 0 12px;
+  font-size: 1.22rem;
+}
+
+.feature-card p,
+.faq-card p {
+  margin: 0;
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.price-tier {
+  color: var(--brand);
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  font-size: 0.76rem;
+  font-weight: 700;
+}
+
+.price-copy {
+  color: var(--muted);
+  line-height: 1.7;
+}
+
+.price-amount {
+  display: block;
+  margin: 18px 0;
+  font-size: 2.1rem;
+}
+
+.price-card-featured {
+  border-color: rgba(123, 242, 207, 0.45);
+  position: relative;
+}
+
+.price-card-featured::after {
+  content: "Most popular";
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  background: rgba(123, 242, 207, 0.12);
+  color: var(--brand);
+  font-size: 0.74rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.cta-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding-bottom: 64px;
+}
+
+.dashboard-page {
+  padding: 28px 0 40px;
+}
+
+.dashboard-shell {
+  display: grid;
+  grid-template-columns: 260px minmax(0, 1fr);
+  gap: 24px;
+}
+
+.dashboard-sidebar {
+  padding: 24px;
+  height: fit-content;
+}
+
+.dashboard-sidebar-top {
+  display: grid;
+  gap: 6px;
+}
+
+.dashboard-sidebar-copy {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.dashboard-nav {
+  flex-direction: column;
+  align-items: flex-start;
+  margin-top: 18px;
+}
+
+.dashboard-sidebar-actions {
+  display: grid;
+  gap: 12px;
+  margin-top: 24px;
+}
+
+.dashboard-main {
+  display: grid;
+  gap: 20px;
+}
+
+.dashboard-heading h1 {
+  margin: 0 0 8px;
+  font-size: 2.2rem;
+}
+
+.dashboard-heading p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.metric-card strong {
+  display: block;
+  margin-top: 12px;
+  font-size: 1.6rem;
+}
+
+.metric-card span {
+  color: var(--muted);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 380px) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.field-stack {
+  display: grid;
+  gap: 14px;
+}
+
+.upload-picker {
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.upload-picker-label {
+  font-weight: 700;
+}
+
+.upload-picker input[type="file"] {
+  width: 100%;
+}
+
+.field-stack label {
+  display: grid;
+  gap: 8px;
+  font-size: 0.95rem;
+}
+
+.field-stack input,
+.field-stack textarea {
+  width: 100%;
+  min-height: 46px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+}
+
+.field-stack textarea {
+  min-height: 130px;
+  resize: vertical;
+}
+
+.helper-text,
+.jobs-table th,
+.jobs-table td:last-child,
+.empty-card p {
+  color: var(--muted);
+}
+
+.jobs-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.action-stack {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.jobs-table th,
+.jobs-table td {
+  padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.jobs-transcript-cell {
+  max-width: 320px;
+  color: var(--muted);
+}
+
+.status-pill {
+  display: inline-flex;
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+}
+
+.status-pill.completed {
+  color: var(--brand);
+}
+
+.status-pill.failed {
+  color: var(--danger);
+}
+
+@media (max-width: 980px) {
+  .hero,
+  .feature-grid,
+  .faq-grid,
+  .pricing-grid,
+  .dashboard-shell,
+  .dashboard-grid,
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .cta-strip,
+  .site-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 640px) {
+  .marketing-shell,
+  .dashboard-page {
+    width: min(1160px, calc(100% - 22px));
+  }
+
+  .site-nav {
+    flex-wrap: wrap;
+  }
+
+  .hero-card h1 {
+    font-size: 2.5rem;
+  }
+}

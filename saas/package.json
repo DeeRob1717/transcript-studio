@@ -1,0 +1,41 @@
+{
+  "name": "transcript-studio-saas",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "prisma generate && next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "prisma:push": "prisma db push"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  },
+  "dependencies": {
+    "@clerk/nextjs": "latest",
+    "@prisma/adapter-pg": "latest",
+    "@prisma/client": "latest",
+    "@stripe/stripe-js": "latest",
+    "@vercel/analytics": "^2.0.1",
+    "@vercel/blob": "^2.3.2",
+    "dotenv": "latest",
+    "next": "latest",
+    "pg": "latest",
+    "react": "latest",
+    "react-dom": "latest",
+    "stripe": "latest",
+    "zod": "latest"
+  },
+  "devDependencies": {
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "prisma": "latest",
+    "typescript": "latest"
+  }
+}

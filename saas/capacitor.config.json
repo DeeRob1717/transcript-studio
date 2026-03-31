@@ -1,0 +1,6 @@
+{
+  "appId": "com.transcriptstudio.app",
+  "appName": "Transcript Studio",
+  "webDir": "out",
+  "bundledWebRuntime": false
+}
