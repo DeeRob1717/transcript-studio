@@ -19,7 +19,9 @@ It then:
 PORT=8080
 TRANSCRIPTION_WORKER_SECRET=your-shared-secret
 WHISPER_CPP_EXE=whisper-cli
-WHISPER_MODEL_PATH=/app/models/ggml-base.en.bin
+WHISPER_MODEL_PATH=/app/models/ggml-base.bin
+WHISPER_LANGUAGE=auto
+WHISPER_THREADS=4
 FFMPEG_PATH=/usr/bin/ffmpeg
 ```
 
@@ -30,7 +32,7 @@ Use the same `TRANSCRIPTION_WORKER_SECRET` value in:
 
 ## Deploy on an Ubuntu VPS with Docker Compose
 
-Recommended minimum for `ggml-base.en.bin`:
+Recommended minimum for `ggml-base.bin`:
 
 - 1 vCPU
 - 4 GB RAM
@@ -39,7 +41,7 @@ Recommended minimum for `ggml-base.en.bin`:
 That gives the worker enough room for Ubuntu, Docker, `ffmpeg`, the Whisper model, and temporary media files.
 
 1. Copy the `worker` folder and your `.bin` model file to the server.
-2. Place the model at `worker/models/ggml-base.en.bin`.
+2. Place the model at `worker/models/ggml-base.bin`.
 3. Create a `.env` file inside `worker`:
 
 ```bash

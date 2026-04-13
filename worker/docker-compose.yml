@@ -2,10 +2,14 @@ services:
   worker:
     build: .
     restart: unless-stopped
+    ports:
+      - "8080:8080"
     environment:
       PORT: 8080
       TRANSCRIPTION_WORKER_SECRET: ${TRANSCRIPTION_WORKER_SECRET}
-      WHISPER_MODEL_PATH: /app/models/ggml-base.en.bin
+      WHISPER_MODEL_PATH: /app/models/ggml-base.bin
+      WHISPER_LANGUAGE: ${WHISPER_LANGUAGE:-auto}
+      WHISPER_THREADS: ${WHISPER_THREADS:-4}
       WHISPER_CPP_EXE: whisper-cli
       FFMPEG_PATH: /usr/bin/ffmpeg
 

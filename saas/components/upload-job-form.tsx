@@ -8,6 +8,7 @@ export function UploadJobForm() {
   const [selectedFileName, setSelectedFileName] = useState("");
   const [statusMessage, setStatusMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [language, setLanguage] = useState("auto");
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -31,10 +32,19 @@ export function UploadJobForm() {
         }
       });
 
-      const payload = await response.json();
+      const responseText = await response.text();
+      let payload: { error?: string; jobId?: string } = {};
+
+      if (responseText) {
+        try {
+          payload = JSON.parse(responseText) as { error?: string; jobId?: string };
+        } catch {
+          payload = {};
+        }
+      }
 
       if (!response.ok) {
-        throw new Error(payload.error || "Upload failed.");
+        throw new Error(payload.error || responseText || "Upload failed.");
       }
 
       setStatusMessage("Upload received. Transcription job created.");
@@ -85,6 +95,29 @@ export function UploadJobForm() {
         Your file will be uploaded first, and the app will create the transcription job from that
         uploaded file automatically.
       </p>
+
+      <label>
+        Language
+        <select
+          name="language"
+          value={language}
+          onChange={(event) => setLanguage(event.target.value)}
+        >
+          <option value="auto">Auto detect (recommended)</option>
+          <option value="en">English</option>
+          <option value="sw">Swahili</option>
+          <option value="fr">French</option>
+          <option value="es">Spanish</option>
+          <option value="de">German</option>
+          <option value="pt">Portuguese</option>
+          <option value="ar">Arabic</option>
+          <option value="hi">Hindi</option>
+          <option value="zh">Chinese</option>
+          <option value="ja">Japanese</option>
+          <option value="ko">Korean</option>
+          <option value="ru">Russian</option>
+        </select>
+      </label>
 
       <button className="primary-button" type="submit">
         {isSubmitting ? "Uploading..." : "Create transcription job"}

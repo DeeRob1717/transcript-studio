@@ -7,20 +7,27 @@ import { createQueuedJob, listJobsForUser, markJobFailed, markJobProcessing } fr
 
 const createJobSchema = z.object({
   originalFileName: z.string().min(1),
-  mediaUrl: z.string().url().optional()
+  mediaUrl: z.string().url().optional(),
+  language: z
+    .string()
+    .trim()
+    .toLowerCase()
+    .regex(/^(auto|[a-z]{2,8})$/)
+    .optional()
 });
 
 async function dispatchToWorker(params: {
   jobId: string;
   originalFileName: string;
   mediaUrl: string;
+  language: string;
 }) {
   const workerUrl = process.env.TRANSCRIPTION_WORKER_URL;
   const appUrl = process.env.NEXT_PUBLIC_APP_URL;
   const workerSecret = process.env.TRANSCRIPTION_WORKER_SECRET;
 
   if (!workerUrl || !appUrl || !workerSecret) {
-    return false;
+    throw new Error("Transcription worker is not configured.");
   }
 
   const normalizedWorkerUrl = workerUrl.trim().replace(/\/+$/, "");
@@ -58,6 +65,7 @@ async function dispatchToWorker(params: {
           jobId: params.jobId,
           originalFileName: params.originalFileName,
           mediaUrl: params.mediaUrl,
+          language: params.language,
           callbackUrl: `${appUrl}/api/worker/transcriptions/complete`,
           callbackSecret: workerSecret
         }),
@@ -123,7 +131,8 @@ export async function POST(request: NextRequest) {
     mediaUrl:
       typeof mediaUrlValue === "string" && mediaUrlValue.trim().length > 0
         ? mediaUrlValue
-        : undefined
+        : undefined,
+    language: formData.get("language")
   });
 
   if (!parsed.success) {
@@ -160,15 +169,13 @@ export async function POST(request: NextRequest) {
   });
 
   try {
-    const dispatched = await dispatchToWorker({
+    await dispatchToWorker({
       jobId: job.id,
       originalFileName: parsed.data.originalFileName,
-      mediaUrl: resolvedMediaUrl
+      mediaUrl: resolvedMediaUrl,
+      language: parsed.data.language || "auto"
     });
-
-    if (dispatched) {
-      await markJobProcessing(job.id);
-    }
+    await markJobProcessing(job.id);
   } catch (error) {
     await markJobFailed({
       jobId: job.id,

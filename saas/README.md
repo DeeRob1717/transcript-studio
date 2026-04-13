@@ -28,8 +28,7 @@ PAYPAL_CLIENT_ID=
 PAYPAL_CLIENT_SECRET=
 PAYPAL_PLAN_ID=
 PAYPAL_WEBHOOK_ID=
-PAYPAL_TEST_EMAIL=buyer@example.com
-PAYPAL_TEST_USER_ID=dev-anonymous-user
+PAYPAL_CUSTOMER_PORTAL_URL=
 NEXT_PUBLIC_APP_URL=http://localhost:3000
 BLOB_READ_WRITE_TOKEN=
 TRANSCRIPTION_WORKER_URL=
@@ -75,3 +74,4 @@ as a Trusted Web Activity after the public site is live.
 - Prisma 7 reads the datasource URL from `prisma.config.ts`.
 - Use `DATABASE_URL` for runtime and `DIRECT_URL` for Prisma CLI with Supabase.
 - Billing is currently wired for PayPal subscription checkout.
+- `PAYPAL_CUSTOMER_PORTAL_URL` is optional and is used by the "Billing help" button when set.

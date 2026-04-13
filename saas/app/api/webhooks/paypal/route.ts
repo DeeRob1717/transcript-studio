@@ -26,20 +26,28 @@ export async function POST(request: NextRequest) {
 
   const eventType = payload?.event_type;
   const resource = payload?.resource ?? {};
-  const appUserId = resource?.custom_id;
+  const appUserId = resource?.custom_id ? String(resource.custom_id) : null;
   const subscriptionId = resource?.id ? String(resource.id) : null;
   const subscriberEmail = resource?.subscriber?.email_address ?? null;
 
-  if (!appUserId) {
+  const subscriptionById = subscriptionId
+    ? await db.subscription.findFirst({
+        where: { stripeSubscriptionId: subscriptionId }
+      })
+    : null;
+
+  const effectiveUserId = appUserId || subscriptionById?.userId || null;
+
+  if (!effectiveUserId) {
     return NextResponse.json({ received: true, skipped: true });
   }
 
   if (eventType === "BILLING.SUBSCRIPTION.ACTIVATED" || eventType === "PAYMENT.SALE.COMPLETED") {
-    const existing = await db.subscription.findFirst({
-      where: {
-        OR: [{ stripeSubscriptionId: subscriptionId ?? undefined }, { userId: appUserId }]
-      }
-    });
+    const existing =
+      subscriptionById ||
+      (await db.subscription.findFirst({
+        where: { userId: effectiveUserId }
+      }));
 
     if (existing) {
       await db.subscription.update({
@@ -53,7 +61,7 @@ export async function POST(request: NextRequest) {
     } else {
       await db.subscription.create({
         data: {
-          userId: appUserId,
+          userId: effectiveUserId,
           stripeCustomerId: subscriberEmail,
           stripeSubscriptionId: subscriptionId,
           status: "ACTIVE"
@@ -62,7 +70,7 @@ export async function POST(request: NextRequest) {
     }
 
     await db.user.update({
-      where: { id: appUserId },
+      where: { id: effectiveUserId },
       data: { plan: "PRO" }
     });
   }
@@ -72,11 +80,11 @@ export async function POST(request: NextRequest) {
     eventType === "BILLING.SUBSCRIPTION.SUSPENDED" ||
     eventType === "BILLING.SUBSCRIPTION.EXPIRED"
   ) {
-    const existing = await db.subscription.findFirst({
-      where: {
-        OR: [{ stripeSubscriptionId: subscriptionId ?? undefined }, { userId: appUserId }]
-      }
-    });
+    const existing =
+      subscriptionById ||
+      (await db.subscription.findFirst({
+        where: { userId: effectiveUserId }
+      }));
 
     if (existing) {
       await db.subscription.update({
@@ -86,7 +94,7 @@ export async function POST(request: NextRequest) {
     }
 
     await db.user.update({
-      where: { id: appUserId },
+      where: { id: effectiveUserId },
       data: { plan: "FREE" }
     });
   }

@@ -1,6 +1,6 @@
 import { createServer } from "node:http";
 import { mkdtemp, mkdir, readFile, rm, stat, writeFile } from "node:fs/promises";
-import { tmpdir } from "node:os";
+import { availableParallelism, tmpdir } from "node:os";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { spawn } from "node:child_process";
@@ -14,8 +14,10 @@ const jobsDir = path.join(__dirname, "data", "jobs");
 const workerSecret = process.env.TRANSCRIPTION_WORKER_SECRET || "";
 const whisperExecutable = process.env.WHISPER_CPP_EXE || "whisper-cli";
 const whisperModelPath =
-  process.env.WHISPER_MODEL_PATH || path.join(__dirname, "models", "ggml-base.en.bin");
+  process.env.WHISPER_MODEL_PATH || path.join(__dirname, "models", "ggml-base.bin");
 const ffmpegExecutable = process.env.FFMPEG_PATH || "ffmpeg";
+const defaultWhisperLanguage = (process.env.WHISPER_LANGUAGE || "auto").trim().toLowerCase();
+const whisperThreads = Math.max(1, Number(process.env.WHISPER_THREADS || availableParallelism()));
 
 await mkdir(uploadsDir, { recursive: true });
 await mkdir(jobsDir, { recursive: true });
@@ -143,18 +145,40 @@ async function prepareTranscriptionSource(inputPath, originalFileName, contentTy
   return { filePath: wavPath, generatedTempFile: true };
 }
 
-async function transcribeWithWhisper(filePath, jobId, workingDir) {
+function getSafeLanguageCode(language) {
+  if (!language || typeof language !== "string") {
+    return "auto";
+  }
+
+  const normalized = language.trim().toLowerCase();
+  if (/^[a-z]{2,8}$/.test(normalized)) {
+    return normalized;
+  }
+
+  return "auto";
+}
+
+async function transcribeWithWhisperLanguage(filePath, jobId, workingDir, language) {
   const outputPrefix = path.join(workingDir, `transcript_${jobId}`);
   const outputTextPath = `${outputPrefix}.txt`;
-  const result = await runCommand(whisperExecutable, [
+  const languageCode = getSafeLanguageCode(language);
+  const args = [
     "-m",
     whisperModelPath,
     "-f",
     filePath,
+    "-t",
+    String(whisperThreads),
     "--output-txt",
     "--output-file",
     outputPrefix
-  ]);
+  ];
+
+  if (languageCode !== "auto") {
+    args.push("--language", languageCode);
+  }
+
+  const result = await runCommand(whisperExecutable, args);
 
   let transcriptText = "";
   try {
@@ -197,7 +221,12 @@ async function processTranscriptionJob(payload) {
     await ensureWhisperPrerequisites();
     const contentType = await downloadToFile(payload.mediaUrl, downloadedPath);
     const source = await prepareTranscriptionSource(downloadedPath, safeName, contentType, workingDir);
-    const transcriptText = await transcribeWithWhisper(source.filePath, payload.jobId, workingDir);
+    const transcriptText = await transcribeWithWhisperLanguage(
+      source.filePath,
+      payload.jobId,
+      workingDir,
+      payload.language || defaultWhisperLanguage
+    );
 
     await sendCallback(payload.callbackUrl, {
       jobId: payload.jobId,
@@ -245,7 +274,9 @@ const server = createServer(async (req, res) => {
       status: "ok",
       provider: "whisper.cpp",
       whisperExecutable,
-      whisperModelPath
+      whisperModelPath,
+      defaultWhisperLanguage,
+      whisperThreads
     });
     return;
   }

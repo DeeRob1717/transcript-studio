@@ -1,8 +1,24 @@
 import Link from "next/link";
+import { auth } from "@clerk/nextjs/server";
+import { redirect } from "next/navigation";
 import { DashboardShell } from "@/components/dashboard-shell";
 import { UploadJobForm } from "@/components/upload-job-form";
+import { getOrCreateCurrentDbUser } from "@/lib/auth";
+import { formatPlanName } from "@/lib/plans";
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const { userId } = await auth();
+  if (!userId) {
+    redirect("/sign-in");
+  }
+
+  const dbUser = await getOrCreateCurrentDbUser();
+  if (!dbUser) {
+    redirect("/sign-in");
+  }
+
+  const currentPlan = formatPlanName(dbUser.plan);
+
   return (
     <main className="dashboard-page">
       <DashboardShell
@@ -12,7 +28,7 @@ export default function DashboardPage() {
         <section className="metrics-grid">
           <article className="metric-card">
             <span>Current plan</span>
-            <strong>Free</strong>
+            <strong>{currentPlan}</strong>
           </article>
           <article className="metric-card">
             <span>Monthly limit</span>

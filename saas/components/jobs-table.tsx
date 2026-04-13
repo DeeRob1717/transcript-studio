@@ -27,7 +27,17 @@ export function JobsTable() {
           throw new Error("Could not load jobs.");
         }
 
-        const payload = (await response.json()) as Job[];
+        const responseText = await response.text();
+        let payload: Job[] = [];
+
+        if (responseText) {
+          try {
+            payload = JSON.parse(responseText) as Job[];
+          } catch {
+            throw new Error("Could not parse jobs response.");
+          }
+        }
+
         if (!ignore) {
           setJobs(payload);
           setError("");
